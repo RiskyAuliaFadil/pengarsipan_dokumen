@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Ktp extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['nama_ktp', 'nik_ktp','alamat_ktp', 'arsip_ktp'];
+}
