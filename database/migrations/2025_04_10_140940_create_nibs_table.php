@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_nib');
             $table->string('no_nib');
+            $table->string('kode_kbli');
             $table->string('alamat_nib');
             $table->string('arsip_nib');
             $table->timestamps();

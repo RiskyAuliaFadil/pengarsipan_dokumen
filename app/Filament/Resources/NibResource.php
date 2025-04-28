@@ -23,12 +23,27 @@ class NibResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Document Management';
+
+    protected static ?string $navigationLabel = 'Kelola Dokumen NIB';
+
+    protected static ?string $slug = 'kelola-dokumen-nib';
+
+    public static ?string $label = 'Kelola Dokumen NIB';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('nama_nib'),
-                TextInput::make('no_nib'),
+                TextInput::make('no_nib')
+                    ->required()
+                    ->numeric()
+                    ->maxLength(20),
+                TextInput::make('kode_kbli')
+                    ->required()
+                    ->maxLength(6)
+                    ->numeric(),
                 TextInput::make('alamat_nib'),
                 FileUpload::make('arsip_nib')
                     ->acceptedFileTypes(['application/pdf'])
@@ -42,16 +57,30 @@ class NibResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_nib'),
-                TextColumn::make('no_nib'),
-                TextColumn::make('alamat_nib'),
+                TextColumn::make('nama_nib')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nama '),
+                TextColumn::make('no_nib')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nomer NIB'),
+                TextColumn::make('kode_kbli')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Kode KBLI'),
+                TextColumn::make('alamat_nib')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Alamat'),
                 TextColumn::make('arsip_nib')
-                ->label('File Arsip')
+                ->label('Arsip FIle'),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('download')

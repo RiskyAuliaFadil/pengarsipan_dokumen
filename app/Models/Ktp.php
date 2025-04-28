@@ -9,5 +9,5 @@ class Ktp extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_ktp', 'nik_ktp','alamat_ktp', 'arsip_ktp'];
+    protected $fillable = ['nama_ktp', 'nik_ktp','provinsi','kota','kecamatan','kelurahan','alamat_ktp', 'arsip_ktp'];
 }

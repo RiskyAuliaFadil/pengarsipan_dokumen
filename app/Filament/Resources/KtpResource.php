@@ -24,12 +24,25 @@ class KtpResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Document Management';
+
+    protected static ?string $navigationLabel = 'Kelola Dokumen KTP';
+
+    protected static ?string $slug = 'kelola-dokumen-ktp';
+
+    public static ?string $label = 'Kelola Dokumen KTP';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('nama_ktp'),
-                TextInput::make('nik_ktp'),
+                TextInput::make('nik_ktp')
+                    ->numeric(),
+                TextInput::make('provinsi'),
+                TextInput::make('kota'),
+                TextInput::make('kecamatan'),
+                TextInput::make('kelurahan'),
                 TextInput::make('alamat_ktp'),
                 FileUpload::make('arsip_ktp')
                     ->image()
@@ -41,16 +54,45 @@ class KtpResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_ktp'),
-                TextColumn::make('nik_ktp'),
-                TextColumn::make('alamat_ktp'),
+                TextColumn::make('nama_ktp')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nama Lengkap'),
+                TextColumn::make('nik_ktp')
+                    ->searchable()
+                    ->sortable()
+                    ->label('NIK'),
+                TextColumn::make('provinsi')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Provinsi'),
+                TextColumn::make('kota')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Kota'),
+                TextColumn::make('kecamatan')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Kecamatan'),
+                TextColumn::make('kelurahan')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Kelurahan'),
+                TextColumn::make('alamat_ktp')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Alamat'),
                 ImageColumn::make('arsip_ktp')
                     ->width(200)
+                    ->height(100)
+                    ->label('Arsip KTP'),
             ])
             ->filters([
-                //
+            
             ])
             ->actions([
+                
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('download')

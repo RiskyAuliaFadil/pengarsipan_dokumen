@@ -9,6 +9,6 @@ class Nib extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_nib', 'no_nib','alamat_nib', 'arsip_nib'];
+    protected $fillable = ['nama_nib', 'no_nib','kode_kbli','alamat_nib', 'arsip_nib'];
 }
 
