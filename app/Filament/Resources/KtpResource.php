@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\KtpExporter;
 use App\Models\Ktp;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
@@ -17,6 +19,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\KtpResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\KtpResource\RelationManagers;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Filters\SelectFilter;
 
 class KtpResource extends Resource
 {
@@ -36,17 +40,56 @@ class KtpResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('nama_ktp'),
-                TextInput::make('nik_ktp')
-                    ->numeric(),
-                TextInput::make('provinsi'),
-                TextInput::make('kota'),
-                TextInput::make('kecamatan'),
-                TextInput::make('kelurahan'),
-                TextInput::make('alamat_ktp'),
-                FileUpload::make('arsip_ktp')
-                    ->image()
-                    ->required()
+                TextInput::make('nama_ktp')
+                ->required(),
+    
+            TextInput::make('nik_ktp')
+                ->numeric()
+                ->required(),
+    
+            Select::make('provinsi_id')
+                ->label('Provinsi')
+                ->options(\App\Models\Provinsi::all()->pluck('nama', 'id'))
+                ->reactive()
+                ->afterStateUpdated(fn (callable $set) => $set('kota_id', null))
+                ->required(),
+    
+            Select::make('kota_id')
+                ->label('Kota')
+                ->options(function (callable $get) {
+                    $provinsi = \App\Models\Provinsi::find($get('provinsi_id'));
+                    return $provinsi ? $provinsi->kotas->pluck('nama', 'id') : [];
+                })
+                ->reactive()
+                ->afterStateUpdated(fn (callable $set) => $set('kecamatan_id', null))
+                ->required(),
+    
+            Select::make('kecamatan_id')
+                ->label('Kecamatan')
+                ->options(function (callable $get) {
+                    $kota = \App\Models\Kota::find($get('kota_id'));
+                    return $kota ? $kota->kecamatans->pluck('nama', 'id') : [];
+                })
+                ->reactive()
+                ->afterStateUpdated(fn (callable $set) => $set('kelurahan_id', null))
+                ->required(),
+    
+            Select::make('kelurahan_id')
+                ->label('Kelurahan')
+                ->options(function (callable $get) {
+                    $kecamatan = \App\Models\Kecamatan::find($get('kecamatan_id'));
+                    return $kecamatan ? $kecamatan->kelurahans->pluck('nama', 'id') : [];
+                })
+                ->reactive()
+                ->required(),
+    
+            TextInput::make('alamat_ktp')
+                ->required(),
+            FileUpload::make('arsip_ktp')
+                ->disk('public')
+                ->directory('arsip-ktp')
+                ->image()
+                ->required(),
             ]);
     }
 
@@ -62,19 +105,19 @@ class KtpResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label('NIK'),
-                TextColumn::make('provinsi')
+                TextColumn::make('provinsi.nama')
                     ->searchable()
                     ->sortable()
-                    ->label('Provinsi'),
-                TextColumn::make('kota')
+                    ->label('Nama Provinsi'),
+                TextColumn::make('kota.nama')
                     ->searchable()
                     ->sortable()
                     ->label('Kota'),
-                TextColumn::make('kecamatan')
+                TextColumn::make('kecamatan.nama')
                     ->searchable()
                     ->sortable()
                     ->label('Kecamatan'),
-                TextColumn::make('kelurahan')
+                TextColumn::make('kelurahan.nama')
                     ->searchable()
                     ->sortable()
                     ->label('Kelurahan'),
@@ -83,13 +126,35 @@ class KtpResource extends Resource
                     ->sortable()
                     ->label('Alamat'),
                 ImageColumn::make('arsip_ktp')
-                    ->width(200)
-                    ->height(100)
+                    ->width(100)
+                    ->height(50)
                     ->label('Arsip KTP'),
             ])
             ->filters([
-            
-            ])
+                SelectFilter::make('provinsi_id')
+                    ->searchable()
+                    ->label('Provinsi')
+                    ->options(\App\Models\Provinsi::pluck('nama', 'id'))
+                    ->placeholder('Filter Provinsi'),
+
+                SelectFilter::make('kota_id')
+                    ->searchable()
+                    ->label('Kota')
+                    ->options(\App\Models\Kota::pluck('nama', 'id'))
+                    ->placeholder('Filter Kota'),
+
+                SelectFilter::make('kecamatan_id')
+                    ->searchable()
+                    ->label('Kecamatan')
+                    ->options(\App\Models\Kecamatan::pluck('nama', 'id'))
+                    ->placeholder('Filter Kecamatan'),
+
+                SelectFilter::make('kelurahan_id')
+                    ->searchable()
+                    ->label('Kelurahan')
+                    ->options(\App\Models\Kelurahan::pluck('nama', 'id'))
+                    ->placeholder('Filter Kelurahan'),
+            ])  
             ->actions([
                 
                 Tables\Actions\ViewAction::make(),
@@ -104,6 +169,9 @@ class KtpResource extends Resource
                     ->visible(fn ($record) => $record->arsip_ktp !== null),
 
             ])
+            // ->headerActions([
+            //     ExportAction::make()->exporter(KtpExporter::class)
+            // ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

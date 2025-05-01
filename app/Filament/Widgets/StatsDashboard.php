@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Ktp;
 use App\Models\Nib;
+use App\Models\User;
 use App\Models\Surat;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -15,10 +16,12 @@ class StatsDashboard extends BaseWidget
         $countKtp = Ktp::count();
         $countNib = Nib::count();
         $countSurat = Surat::count();
+        $countUser = User::count();
         return [
             Stat::make('Jumlah KTP', $countKtp . ' KTP'),
             Stat::make('Jumlah NIB', $countNib . ' NIB'),
             Stat::make('Jumlah Surat', $countSurat . ' Surat'),
+            Stat::make('Jumlah User', $countUser . ' User'),
         ];
     }
 }

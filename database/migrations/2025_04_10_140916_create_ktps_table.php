@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('nama_ktp');
             $table->string('nik_ktp');
-            $table->string('provinsi');
-            $table->string('kota');
-            $table->string('kecamatan');
-            $table->string('kelurahan');
+            $table->foreignId('provinsi_id')->constrained('provinsis')->cascadeOnDelete();
+            $table->foreignId('kota_id')->constrained('kotas')->cascadeOnDelete();
+            $table->foreignId('kecamatan_id')->constrained('kecamatans')->cascadeOnDelete();
+            $table->foreignId('kelurahan_id')->constrained('kelurahans')->cascadeOnDelete();
             $table->string('alamat_ktp');
             $table->string('arsip_ktp');
             $table->timestamps();

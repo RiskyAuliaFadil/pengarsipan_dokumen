@@ -9,5 +9,38 @@ class Ktp extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_ktp', 'nik_ktp','provinsi','kota','kecamatan','kelurahan','alamat_ktp', 'arsip_ktp'];
+    protected $fillable = [
+        'nama_ktp',
+        'nik_ktp',
+        'provinsi_id',
+        'kota_id',
+        'kecamatan_id',
+        'kelurahan_id',
+        'alamat_ktp',
+        'arsip_ktp',
+    ];
+
+    // RELASI KE PROVINSI
+    public function provinsi()
+    {
+        return $this->belongsTo(Provinsi::class);
+    }
+
+    // RELASI KE KOTA
+    public function kota()
+    {
+        return $this->belongsTo(Kota::class);
+    }
+
+    // RELASI KE KECAMATAN
+    public function kecamatan()
+    {
+        return $this->belongsTo(Kecamatan::class);
+    }
+
+    // RELASI KE KELURAHAN
+    public function kelurahan()
+    {
+        return $this->belongsTo(Kelurahan::class);
+    }
 }
