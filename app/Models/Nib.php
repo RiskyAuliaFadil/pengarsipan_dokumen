@@ -9,6 +9,11 @@ class Nib extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_nib', 'no_nib','kode_kbli','alamat_nib', 'arsip_nib'];
+    protected $fillable = ['nama_nib', 'no_nib','kbli_id','alamat_nib', 'arsip_nib'];
+
+    public function kbli()
+    {
+        return $this->belongsTo(Kbli::class);
+    }
 }
 

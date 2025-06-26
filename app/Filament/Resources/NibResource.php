@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\NibResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\NibResource\RelationManagers;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\SelectFilter;
 
 class NibResource extends Resource
 {
@@ -35,17 +37,29 @@ class NibResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('nama_nib'),
+                TextInput::make('nama_nib')
+                ->required()
+                ->label('Nama'),
+
                 TextInput::make('no_nib')
+                ->label('Nomor Induk Berusaha')
                     ->required()
                     ->numeric()
                     ->maxLength(20),
-                TextInput::make('kode_kbli')
-                    ->required()
-                    ->maxLength(6)
-                    ->numeric(),
-                TextInput::make('alamat_nib'),
+                // TextInput::make('kode_kbli')
+                //     ->required()
+                //     ->maxLength(6)
+                //     ->numeric(),
+                Select::make('kbli_id')
+                    ->relationship('kbli', 'nama') // 'kbli' sesuai dengan nama method relasi di model
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                TextInput::make('alamat_nib')
+                ->required()
+                ->label('Alamat'),
                 FileUpload::make('arsip_nib')
+                ->label('Arsip Dokumen')
                     ->acceptedFileTypes(['application/pdf'])
                     ->required()
                     ->downloadable()
@@ -58,14 +72,14 @@ class NibResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama_nib')
+                    ->label('Nama')
                     ->searchable()
-                    ->sortable()
-                    ->label('Nama '),
+                    ->sortable(),
                 TextColumn::make('no_nib')
                     ->searchable()
                     ->sortable()
                     ->label('Nomer NIB'),
-                TextColumn::make('kode_kbli')
+                TextColumn::make('kbli.nama')
                     ->searchable()
                     ->sortable()
                     ->label('Kode KBLI'),
@@ -74,10 +88,13 @@ class NibResource extends Resource
                     ->sortable()
                     ->label('Alamat'),
                 TextColumn::make('arsip_nib')
-                ->label('Arsip FIle'),
+                    ->label('Arsip Dokumen')
+                   
             ])
             ->filters([
-                //
+                SelectFilter::make('kbli')
+                    ->relationship('kbli', 'nama')
+                    ->label('Kode KBLI')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

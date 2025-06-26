@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SuratResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -36,11 +37,16 @@ class SuratResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('no_surat'),
-                DatePicker::make('tgl_surat'),
-                TextInput::make('perihal'),
-                TextInput::make('pengirim'),
+                TextInput::make('no_surat')
+                    ->required(),
+                DatePicker::make('tgl_surat')
+                    ->required(),
+                TextInput::make('perihal')
+                    ->required(),
+                TextInput::make('pengirim')
+                    ->required(),
                 FileUpload::make('arsip_surat')
+                    ->required()
             ]);
     }
 
@@ -49,19 +55,24 @@ class SuratResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('no_surat')
+                    ->label('No Surat')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('tgl_surat')
                     ->searchable()
+                    ->label('Tanggal')
                     ->sortable(),
                 TextColumn::make('perihal')
                     ->searchable()
+                    ->label('Perihal')
                     ->sortable(),
                 TextColumn::make('pengirim')
                     ->searchable()
+                    ->label('Pengirim')
                     ->sortable(),
                 TextColumn::make('arsip_surat')
                     ->searchable()
+                    ->label('Arsip Dokumen')
                     ->sortable()
             ])
             ->filters([

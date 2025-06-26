@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             KotaSeeder::class,
             KecamatanSeeder::class,
             KelurahanSeeder::class,
+            KbliSeeder::class,
         ]);
 
         User::factory()->create([

@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\NibResource\Pages;
 
+use App\Filament\Exports\NibExporter;
 use App\Filament\Resources\NibResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\ExportAction;
 
 class ListNibs extends ListRecords
 {
@@ -13,7 +16,11 @@ class ListNibs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+           ExportAction::make()
+                ->label('Export')
+                ->exporter(NibExporter::class),
+            Actions\CreateAction::make()
+            ->label('Tambah')
         ];
     }
 }

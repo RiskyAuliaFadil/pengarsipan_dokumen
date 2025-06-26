@@ -22,7 +22,7 @@ class ListKtps extends ListRecords
             // Actions\Action::make('export')
             //     ->url(url('/export'.$decodeQueryString)),
             ExportAction::make()
-                ->label('Export KTP')
+                ->label('Export')
                 ->exporter(KtpExporter::class),
             Actions\CreateAction::make()
                 ->label('Tambah')

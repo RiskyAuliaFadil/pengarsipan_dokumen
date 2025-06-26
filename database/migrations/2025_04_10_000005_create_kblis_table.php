@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nibs', function (Blueprint $table) {
+        Schema::create('kblis', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_nib');
-            $table->string('no_nib');
-            $table->foreignId('kbli_id')->constrained('kblis')->cascadeOnDelete();
-            $table->string('alamat_nib');
-            $table->string('arsip_nib');
+            $table->string('nama');
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nibs');
+        Schema::dropIfExists('kblis');
     }
 };

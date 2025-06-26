@@ -41,20 +41,28 @@ class KtpResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama_ktp')
+                ->label('Nama')
                 ->required(),
     
-            TextInput::make('nik_ktp')
+                TextInput::make('nik_ktp')
                 ->numeric()
-                ->required(),
+                ->label('NIK')
+                ->required()
+                ->minLength(16)
+                ->maxLength(16)
+                ->rule('digits:16') // validasi Laravel: harus 16 digit
+                ->validationMessages([
+                'digits' => 'NIK harus terdiri dari tepat 16 digit.',])
+                ->unique(ignoreRecord: true), // ini penting saat edit
     
-            Select::make('provinsi_id')
+                Select::make('provinsi_id')
                 ->label('Provinsi')
                 ->options(\App\Models\Provinsi::all()->pluck('nama', 'id'))
                 ->reactive()
                 ->afterStateUpdated(fn (callable $set) => $set('kota_id', null))
                 ->required(),
     
-            Select::make('kota_id')
+                Select::make('kota_id')
                 ->label('Kota')
                 ->options(function (callable $get) {
                     $provinsi = \App\Models\Provinsi::find($get('provinsi_id'));
@@ -64,7 +72,7 @@ class KtpResource extends Resource
                 ->afterStateUpdated(fn (callable $set) => $set('kecamatan_id', null))
                 ->required(),
     
-            Select::make('kecamatan_id')
+                Select::make('kecamatan_id')
                 ->label('Kecamatan')
                 ->options(function (callable $get) {
                     $kota = \App\Models\Kota::find($get('kota_id'));
@@ -74,7 +82,7 @@ class KtpResource extends Resource
                 ->afterStateUpdated(fn (callable $set) => $set('kelurahan_id', null))
                 ->required(),
     
-            Select::make('kelurahan_id')
+                Select::make('kelurahan_id')
                 ->label('Kelurahan')
                 ->options(function (callable $get) {
                     $kecamatan = \App\Models\Kecamatan::find($get('kecamatan_id'));
@@ -83,9 +91,11 @@ class KtpResource extends Resource
                 ->reactive()
                 ->required(),
     
-            TextInput::make('alamat_ktp')
+                TextInput::make('alamat_ktp')
+                ->label('Alamat')
                 ->required(),
-            FileUpload::make('arsip_ktp')
+                FileUpload::make('arsip_ktp')
+                ->label('Arsip Dokumen')
                 ->disk('public')
                 ->directory('arsip-ktp')
                 ->image()
@@ -128,7 +138,7 @@ class KtpResource extends Resource
                 ImageColumn::make('arsip_ktp')
                     ->width(100)
                     ->height(50)
-                    ->label('Arsip KTP'),
+                    ->label('Arsip Dokumen'),
             ])
             ->filters([
                 SelectFilter::make('provinsi_id')
